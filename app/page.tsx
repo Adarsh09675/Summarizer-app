@@ -1,65 +1,71 @@
-import Image from "next/image";
+import { createClient } from '@/utils/supabase/server'
+import { Button } from '@/components/ui/button'
+import { signout } from './auth/actions'
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Fetch profile to get role
+  let role = 'guest'
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    role = profile?.role || 'user'
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-black text-white p-8">
+      <nav className="flex justify-between items-center mb-12">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          Summarizer App
+        </h1>
+        <div className="flex gap-4 items-center">
+          {user ? (
+            <>
+              <span className="text-sm text-gray-400">
+                Logged in as: <span className="text-white font-medium">{user.email}</span> ({role})
+              </span>
+              <form action={signout}>
+                <Button variant="outline" className="text-white bg-transparent border-white/20 hover:bg-white/10">
+                  Sign Out
+                </Button>
+              </form>
+            </>
+          ) : (
+            <div className="flex gap-4">
+              <a href="/login"><Button variant="ghost" className='text-white hover:text-white/80'>Login</Button></a>
+              <a href="/signup"><Button className="bg-gradient-to-r from-blue-600 to-purple-600">Get Started</Button></a>
+            </div>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </nav>
+
+      <main className="max-w-4xl mx-auto text-center space-y-8">
+        <h2 className="text-5xl font-extrabold tracking-tight bg-gradient-to-br from-white via-gray-300 to-gray-500 bg-clip-text text-transparent">
+          Summarize Any Article with AI
+        </h2>
+        <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          Paste your article link below and get a concise summary in seconds. Powered by advanced AI.
+        </p>
+
+        <div className="relative group max-w-2xl mx-auto mt-12">
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+          <div className="relative bg-black ring-1 ring-gray-900 rounded-lg leading-none p-4">
+            <input
+              type="text"
+              placeholder="Enter article URL..."
+              className="w-full bg-transparent text-white placeholder-gray-600 focus:outline-none p-2 text-lg"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+          <Button className="mt-4 w-full bg-white text-black hover:bg-gray-200 font-bold py-3 text-lg" disabled={!user}>
+            {user ? 'Summarize Now' : 'Login to Summarize'}
+          </Button>
         </div>
       </main>
     </div>
-  );
+  )
 }
