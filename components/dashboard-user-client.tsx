@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useActionState, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { summarizeArticle } from '@/app/actions'
+import { summarizeArticle, ActionState } from '@/app/actions'
 import { SummaryCard } from '@/components/summary-card'
 import { FileText } from 'lucide-react'
 import { UserArticleModal } from '@/components/user-article-modal'
@@ -13,8 +13,15 @@ interface UserDashboardClientProps {
     articles: any[]
 }
 
+const initialState: ActionState = {
+    error: undefined,
+    message: undefined,
+    success: false
+}
+
 export function UserDashboardClient({ tasks, articles }: UserDashboardClientProps) {
     const [selectedArticle, setSelectedArticle] = useState<any | null>(null)
+    const [state, formAction] = useActionState(summarizeArticle, initialState)
 
     return (
         <div className="max-w-6xl mx-auto space-y-12 pb-12">
@@ -23,7 +30,18 @@ export function UserDashboardClient({ tasks, articles }: UserDashboardClientProp
             <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-blue-900/40 to-purple-900/40 p-8 backdrop-blur-xl transition shadow-2xl">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
                 <h2 className="text-3xl font-bold text-white mb-6">Summarize New Article</h2>
-                <form action={summarizeArticle} className="space-y-6">
+                <form action={formAction} className="space-y-6">
+                    {state?.error && (
+                        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-sm">
+                            {state.error}
+                        </div>
+                    )}
+                    {state?.message && (
+                        <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-500 rounded-lg text-sm">
+                            {state.message}
+                        </div>
+                    )}
+
                     <div className="space-y-2">
                         <label htmlFor="title" className="block text-sm font-medium text-gray-300">Article Title</label>
                         <Input
@@ -90,7 +108,7 @@ export function UserDashboardClient({ tasks, articles }: UserDashboardClientProp
                             </div>
                             <h3 className="text-xl font-semibold text-white mb-2 line-clamp-1 group-hover:text-blue-300 transition">{article.title}</h3>
                             <p className="text-sm text-gray-400 mb-4 line-clamp-3">{article.content}</p>
-                            <Button variant="outline" size="sm" className="w-full border-white/20 hover:bg-white/10 text-white">
+                            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-md">
                                 Read & Summarize
                             </Button>
                         </div>

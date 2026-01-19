@@ -1,0 +1,10 @@
+app/admin/articles/create/page.tsx(18,23): error TS2322: Type '(prevState: any, formData: FormData) => Promise<ArticleFormState>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '(prevState: any, formData: FormData) => Promise<ArticleFormState>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Target signature provides too few arguments. Expected 2 or more, but got 1.
+components/dashboard-user-client.tsx(26,23): error TS2322: Type '(formData: FormData) => Promise<{ error: string; success?: undefined; message?: undefined; } | { success: boolean; message: string; error?: undefined; }>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '(formData: FormData) => Promise<{ error: string; success?: undefined; message?: undefined; } | { success: boolean; message: string; error?: undefined; }>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<{ error: string; success?: undefined; message?: undefined; } | { success: boolean; message: string; error?: undefined; }>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<{ error: string; success?: undefined; message?: undefined; } | { success: boolean; message: string; error?: undefined; }>' is not assignable to type 'Promise<void>'.
+        Type '{ error: string; success?: undefined; message?: undefined; } | { success: boolean; message: string; error?: undefined; }' is not assignable to type 'void'.
+          Type '{ error: string; success?: undefined; message?: undefined; }' is not assignable to type 'void'.
+utils/listModels.ts(6,32): error TS2339: Property 'listModels' does not exist on type 'GoogleGenerativeAI'.
