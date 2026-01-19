@@ -43,14 +43,26 @@ export const updateSession = async (request: NextRequest) => {
         data: { user },
     } = await supabase.auth.getUser()
 
-    if (request.nextUrl.pathname.startsWith('/admin') && user) {
+    if (user) {
         const { data: profile } = await supabase
             .from('profiles')
-            .select('role')
+            .select('role, is_blocked')
             .eq('id', user.id)
             .single()
 
-        if (profile?.role !== 'admin') {
+        if (profile?.is_blocked) {
+            await supabase.auth.signOut()
+
+            // Prevent infinite redirect loop if already on /login
+            if (!request.nextUrl.pathname.startsWith('/login')) {
+                const url = request.nextUrl.clone()
+                url.pathname = '/login'
+                url.searchParams.set('error', 'Your account has been blocked')
+                return NextResponse.redirect(url)
+            }
+        }
+
+        if (request.nextUrl.pathname.startsWith('/admin') && profile?.role !== 'admin') {
             return NextResponse.redirect(new URL('/', request.url))
         }
     }

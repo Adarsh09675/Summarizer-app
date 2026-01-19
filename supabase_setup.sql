@@ -34,6 +34,49 @@ end;
 $$;
 
 -- Trigger the function every time a user is created
-create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Admin Panel Schema Updates
+
+-- Add is_blocked to profiles (if running fresh)
+alter table public.profiles add column if not exists is_blocked boolean default false;
+
+-- Create articles table
+create table if not exists public.articles (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  title text not null,
+  content text not null,
+  summary text,
+  user_id uuid references public.profiles(id) on delete set null
+);
+
+alter table public.articles enable row level security;
+
+create policy "Admins can do everything on articles"
+  on public.articles
+  for all
+  using (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role = 'admin'
+    )
+  );
+
+create policy "Users can view assigned articles"
+  on public.articles
+  for select
+  using (
+    auth.uid() = user_id
+  );
+
+create policy "Admins can update any profile"
+  on public.profiles
+  for update
+  using (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role = 'admin'
+    )
+  );
