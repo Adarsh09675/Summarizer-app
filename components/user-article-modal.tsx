@@ -14,6 +14,7 @@ export function UserArticleModal({ article, onClose }: UserArticleModalProps) {
     const [isEditing, setIsEditing] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState<string | null>(null)
 
     // State for local edits before summarization
     const [title, setTitle] = useState(article.title)
@@ -30,11 +31,21 @@ export function UserArticleModal({ article, onClose }: UserArticleModalProps) {
         formData.append('title', title)
         formData.append('description', content) // The action expects 'description'
 
-        const result = await summarizeArticle(formData)
+        const result = await summarizeArticle(null, formData)
 
         if (result?.error) {
             setError(result.error)
             setLoading(false)
+            return
+        }
+
+        if (result?.success) {
+            setSuccess(result.message ?? null)
+            // Wait a bit before closing to let user see message
+            setTimeout(() => {
+                setLoading(false)
+                onClose()
+            }, 2000)
             return
         }
 
@@ -68,6 +79,11 @@ export function UserArticleModal({ article, onClose }: UserArticleModalProps) {
                                 {error && (
                                     <div className="bg-red-900/20 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-4">
                                         {error}
+                                    </div>
+                                )}
+                                {success && (
+                                    <div className="bg-green-900/20 border border-green-500/20 text-green-400 p-3 rounded-lg text-sm mb-4">
+                                        {success}
                                     </div>
                                 )}
                                 <Input

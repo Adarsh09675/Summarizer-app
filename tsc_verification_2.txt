@@ -1,0 +1,12 @@
+components/dashboard-user-client.tsx(24,33): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(action: (state: { error: string; success: boolean; message?: undefined; } | { success: boolean; message: string; error: undefined; }) => { error: string; success: boolean; message?: undefined; } | { success: boolean; message: string; error: undefined; } | Promise<...>, initialState: { ...; } | { ...; }, permalink?: string | undefined): [state: ...]', gave the following error.
+    Argument of type '(prevState: any, formData: FormData) => Promise<{ error: string; success: boolean; message?: undefined; } | { success: boolean; message: string; error: undefined; }>' is not assignable to parameter of type '(state: { error: string; success: boolean; message?: undefined; } | { success: boolean; message: string; error: undefined; }) => { error: string; success: boolean; message?: undefined; } | { success: boolean; message: string; error: undefined; } | Promise<...>'.
+      Target signature provides too few arguments. Expected 2 or more, but got 1.
+  Overload 2 of 2, '(action: (state: { error: string; success: boolean; message?: undefined; } | { success: boolean; message: string; error: undefined; }, payload: FormData) => { error: string; success: boolean; message?: undefined; } | { ...; } | Promise<...>, initialState: { ...; } | { ...; }, permalink?: string | undefined): [state: ...]', gave the following error.
+    Argument of type '{ error: string | undefined; message: string | undefined; success: boolean; }' is not assignable to parameter of type '{ error: string; success: boolean; message?: undefined; } | { success: boolean; message: string; error: undefined; }'.
+      Type '{ error: string | undefined; message: string | undefined; success: boolean; }' is not assignable to type '{ success: boolean; message: string; error: undefined; }'.
+        Types of property 'message' are incompatible.
+          Type 'string | undefined' is not assignable to type 'string'.
+            Type 'undefined' is not assignable to type 'string'.
+components/user-article-modal.tsx(43,24): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'SetStateAction<string | null>'.
+  Type 'undefined' is not assignable to type 'SetStateAction<string | null>'.
