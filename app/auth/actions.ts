@@ -17,7 +17,7 @@ const loginSchema = z.object({
     password: z.string().min(6),
 })
 
-export async function login(prevState: any, formData: FormData) {
+export async function login(prevState: any, formData: FormData): Promise<{ error: string | null }> {
     const supabase = await createClient()
 
     // validate data
@@ -38,10 +38,27 @@ export async function login(prevState: any, formData: FormData) {
     }
 
     revalidatePath('/', 'layout')
+
+    // Check if user is blocked
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('is_blocked')
+            .eq('id', user.id)
+            .single()
+
+        if (profile?.is_blocked) {
+            await supabase.auth.signOut()
+            return { error: 'Your account has been blocked. Please contact support.' }
+        }
+    }
+
     redirect('/')
 }
 
-export async function signup(prevState: any, formData: FormData) {
+export async function signup(prevState: any, formData: FormData): Promise<{ error: string | null }> {
     const supabase = await createClient()
 
     const data = {
@@ -52,7 +69,7 @@ export async function signup(prevState: any, formData: FormData) {
 
     const result = signupSchema.safeParse(data)
     if (!result.success) {
-        return { error: result.error.errors[0].message }
+        return { error: result.error.issues[0].message }
     }
 
     const { error } = await supabase.auth.signUp({
