@@ -2,9 +2,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-// ✅ stable + supported
-// ✅ Strictly using Gemini 2.0 Flash (aka 2.5 Flash) as requested
-const MODEL_NAME = "gemini-2.5-flash";
+// Use the model from environment variable, default to gemini-2.0-flash-exp
+const MODEL_NAME = process.env.GEMINI_MODEL || "gemini-2.0-flash-exp";
 
 async function generateWithRetry(prompt: string, retries = 3): Promise<string> {
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
