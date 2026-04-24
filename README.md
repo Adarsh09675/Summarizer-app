@@ -13,17 +13,17 @@ An AI-powered text summarization application built with Next.js, featuring user 
 
 ## Screenshots
 
-### Login Page
-![Login Page](screenshot/Screenshot%202026-04-24%20135812.png)
-*The login page where users can sign in to access the application.*
-
 ### User Dashboard
-![User Dashboard](screenshot/Screenshot%202026-04-24%20135951.png)
-*The main dashboard for authenticated users, showing available articles and summary options.*
+![User Dashboard](screenshot/Screenshot%202026-04-24%20135812.png)
+*The main dashboard for authenticated users, showing user data and available features.*
 
-### Admin Panel
-![Admin Panel](screenshot/Screenshot%202026-04-24%20140055.png)
-*The admin interface for managing users, articles, and application settings.*
+### Login Page
+![Login Page](screenshot/Screenshot%202026-04-24%20135951.png)
+*The login page where existing users can sign in to access the application.*
+
+### Signup Page
+![Signup Page](screenshot/Screenshot%202026-04-24%20140055.png)
+*The signup page where new users can create an account to join the application.*
 
 ## Tech Stack
 
